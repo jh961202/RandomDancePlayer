@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>隨機舞蹈播放器 v1.0.0</title>
+  <script defer src="renderer.js"></script>
+  <link rel="stylesheet" href="node_modules/ion-rangeslider/css/ion.rangeSlider.min.css">
+  <link rel="stylesheet" href="node_modules/bootstrap-icons/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="css/index.css">
+</head>
+
+<body>
+  <div class="navbar bg-base-100 shadow-sm sticky top-0 z-50">
+    <div class="flex-1">
+      <button class="btn btn-ghost text-xl" onclick="aboutContent.showModal()">Random Dance Player</buttom>
+    </div>
+    <div class="flex-none">
+      <button class="btn btn-soft btn-accent" id="select-files"><i class="bi bi-file-earmark-plus"></i> 加入音樂</button>
+      <button class="btn btn-soft btn-info" id="select-soundeffectsInBetween"><i class="bi bi-music-note"></i>
+        加入間隔</button>
+      <div class="dropdown dropdown-end">
+        <div tabindex="0" role="button" class="btn m-1 btn-soft btn-primary"><i class="bi bi-music-note-list"></i> 播放清單
+        </div>
+        <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+          <li id="load-playlist"><a><i class="bi bi-folder2-open"></i> 載入...</a></li>
+          <li id="save-playlist"><a><i class="bi bi-floppy"></i> 儲存...</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <ul class="list bg-base-100 rounded-box shadow-md pb-20" id="playlist"></ul>
+  <audio id="audio-player"></audio>
+  <audio id="soundeffectsInBetween-player"></audio>
+
+  <div class="dock">
+    <button id="mainPlayer-control">
+      <i class="bi bi-play-fill"></i>
+      <span class="dock-label" id="mainPlayer-label">主音樂未播放</span>
+    </button>
+
+    <button id="intermissionPlayer-control">
+      <i class="bi bi-play-fill"></i>
+      <span class="dock-label" id="intermissionPlayer-label">間隔音</span>
+    </button>
+
+    <button id="shuffleButton">
+      <i class="bi bi-shuffle"></i>
+      <span class="dock-label" id="shuffleButton-label">啟動隨機播放</span>
+    </button>
+
+  </div>
+
+  <dialog id="playlistLoadWarning" class="modal">
+    <div class="modal-box prose" id="loadWarningContent">
+      <h3 class="text-xl font-bold"><i class="bi bi-exclamation-diamond"></i> 播放清單可能有問題！</h3>
+    </div>
+  </dialog>
+
+  <dialog id="aboutContent" class="modal">
+    <div class="modal-box w-fit max-w-5xl prose">
+      <h3 class="text-lg font-bold">關於本軟體</h3>
+      <p>
+        隨機舞蹈播放器 v1.0.0 Build 20250302<br>
+        著作權利所有©2025 <a class="text-blue-400 underline hover:text-blue-500 hover:brightness-150 cursor-pointer"
+          href="https://www.facebook.com/adian.fantasy.world/" target="_blank">Adian's Fantasy World</a>
+      </p>
+      <p>
+        本軟體以MIT授權條款釋出，您可在GitHub專案頁面查閱到原始碼。
+      </p>
+
+      <h3 class="text-lg font-bold">使用的套件</h3>
+      <p>以下套件使本軟體能夠正常運作並提供各項功能，謹此致謝</p>
+      <h4 class="text-md"><a class="text-blue-400 underline hover:text-blue-500 hover:brightness-150 cursor-pointer"
+        href="https://github.com/electron/electron" target="_blank">Electron</a></h4>
+      <p>一款跨平台的應用程式開發框架，以MIT授權條款進行授權。</p>
+      <h4 class="text-md"><a class="text-blue-400 underline hover:text-blue-500 hover:brightness-150 cursor-pointer"
+        href="https://github.com/SortableJS/Sortable" target="_blank">SortableJS</a></h4>
+      <p>簡單迅速實現元素拖拉排序的套件，以MIT授權條款進行授權。</p>
+      <h4 class="text-md"><a class="text-blue-400 underline hover:text-blue-500 hover:brightness-150 cursor-pointer"
+        href="https://github.com/sweetalert2/sweetalert2" target="_blank">Sweetalert2</a></h4>
+      <p>讓各式各樣的提示訊息不再單調，以MIT授權條款進行授權。</p>
+      <h4 class="text-md"><a class="text-blue-400 underline hover:text-blue-500 hover:brightness-150 cursor-pointer"
+        href="https://github.com/IonDen/ion.rangeSlider" target="_blank">Ion.RangeSlider</a></h4>
+      <p>基於jQuery的視覺化拖拉條，以MIT授權條款進行授權。</p>
+      <h4 class="text-md"><a class="text-blue-400 underline hover:text-blue-500 hover:brightness-150 cursor-pointer"
+        href="https://github.com/tailwindlabs/tailwindcss" target="_blank">Tailwind CSS</a></h4>
+      <p>超高自由度的CSS框架，以MIT授權條款進行授權。</p>
+      <h4 class="text-md"><a class="text-blue-400 underline hover:text-blue-500 hover:brightness-150 cursor-pointer"
+        href="https://github.com/saadeghi/daisyui" target="_blank">daisyUI</a></h4>
+      <p>基於Tailwind CSS的UI套件庫，以MIT授權條款進行授權。</p>
+      <h4 class="text-md"><a class="text-blue-400 underline hover:text-blue-500 hover:brightness-150 cursor-pointer"
+        href="https://github.com/twbs/icons" target="_blank">Bootstrap Icons</a></h4>
+      <p>提供眾多適合各種場合的圖示集，以MIT授權條款進行授權。</p>
+
+      <h3 class="text-lg font-bold">使用時遇到問題？</h3>
+      <p>
+          您可以用以下方式尋求協助：
+      <ul>
+        <li><i class="bi bi-chat-dots"></i> 私訊作者粉專</li>
+        <li><i class="bi bi-bug"></i> 至<a class="text-blue-400 underline hover:text-blue-500 hover:brightness-150 cursor-pointer"
+          href="https://github.com/jh961202/RandomDancePlayer/issues" target="_blank">本專案的GitHub Issues</a>填寫回饋</li>
+      </ul>
+      </p>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
+</body>
+
+</html>

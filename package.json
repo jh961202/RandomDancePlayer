@@ -1,0 +1,31 @@
+{
+  "name": "randomdanceplayer",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron --try-supported-channel-layouts ."
+  },
+  "author": "Adian's Fantasy World",
+  "license": "MIT",
+  "description": "隨機舞蹈播放器",
+  "dependencies": {
+    "@tailwindcss/cli": "^4.0.8",
+    "bootstrap-icons": "^1.11.3",
+    "ion-rangeslider": "^2.3.1",
+    "jquery": "3.7.1",
+    "sortablejs": "^1.15.6",
+    "sweetalert2": "^11.17.2"
+  },
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.16",
+    "autoprefixer": "^10.4.20",
+    "daisyui": "^5.0.0",
+    "electron": "34.2.0",
+    "electron-builder": "25.1.8",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.0.8"
+  },
+  "build": {
+    "asar": true
+  }
+}
