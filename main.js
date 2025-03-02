@@ -15,7 +15,7 @@ app.whenReady().then(() => {
       contextIsolation: false
     }
   });
-  // mainWindow.removeMenu();
+  mainWindow.removeMenu();
   mainWindow.loadFile('index.html');
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url);

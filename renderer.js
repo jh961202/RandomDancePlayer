@@ -303,7 +303,7 @@ function renderPlaylist() {
 // 設定播放區間
 async function editTrackSegment(index) {
   const track = playlist[index];
-  const currentTime = audioPlayer.currentTime;
+  let currentTime = audioPlayer.currentTime;
 
   try {
     const duration = await getTrackDuration(track.path);
@@ -550,7 +550,7 @@ function startTrackEndCheck(endTime) {
   }
 }
 
-// **播放下一首時淡出**
+// 播放下一首時淡出
 function playNextTrack() {
   const track = playlist[currentIndex];
   if (track.fadeOut) {
@@ -567,7 +567,7 @@ function playNextTrack() {
   }
 }
 
-// **淡出效果**
+// 淡出效果
 function fadeOutAudio(duration, callback) {
   let volume = 1;
   const step = 1 / (duration / 100);
