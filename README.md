@@ -28,7 +28,7 @@
 ## 更版紀錄
 > 建置中
 ## 使用說明
-> 建置中
+[請看這裡](https://github.com/jh961202/RandomDancePlayer/wiki/%E9%9A%A8%E6%A9%9F%E8%88%9E%E8%B9%88%E6%92%AD%E6%94%BE%E5%99%A8-%E4%BD%BF%E7%94%A8%E8%AA%AA%E6%98%8E%E6%9B%B8)
 ## 從原始碼執行
 ### 必要條件
 - Windows/Mac/Linux均可
