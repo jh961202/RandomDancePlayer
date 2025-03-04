@@ -467,30 +467,23 @@ function confirmRemoveTrack(index) {
   } else {
     removeTrack(index);
   }
-}
+} // confirmRemoveTrack
 
 // 刪除曲目
 function removeTrack(index) {
   const wasPlaying = currentIndex === index;
   playlist.splice(index, 1); // 移除曲目
 
-  if (wasPlaying) {
-    if (playlist.length === 0) {
-      // 清空播放器
-      audioPlayer.src = '';
-      currentIndex = -1;
-    } else {
-      // 若有下一首，則載入但不自動播放
-      currentIndex = Math.min(index, playlist.length - 1);
-      loadTrack(currentIndex);
-    }
-  } else if (index < currentIndex) {
-    // 如果刪除的是在播放曲目之前的曲目，則調整 currentIndex
+  if (wasPlaying) { // 如果刪除的曲目正在被播放，則清空播放器
+    audioPlayer.src = '';
+    currentIndex = -1;
+    mainPlayerControl.innerHTML = "<i class=\"bi bi-play-fill\"></i><span class=\"dock-label\" id=\"mainPlayer-label\">主音樂未播放</span>";
+  } else if (index < currentIndex) { // 如果刪除的是在播放曲目之前的曲目，則調整 currentIndex（反之則不用動）
     currentIndex--;
   }
 
   renderPlaylist();
-}
+} // removeTrack
 
 // 載入曲目但不自動播放
 function loadTrack(index) {
@@ -604,7 +597,19 @@ function playIntermissionSound() {
 intermissionAudioPlayer.addEventListener("ended", () => {
   isIntermissionPlaying = false;
   intermissionPlayerControl.innerHTML = "<i class=\"bi bi-play-fill\"></i><span class=\"dock-label\" id=\"intermissionPlayer-label\">間隔音未播放</span>";
-  playTrack(currentIndex + 1);
+  if (!playlist.length) {
+    Swal.fire({
+      theme: 'auto',
+      title: '播放清單裡面沒有曲目',
+      text: '請加入音樂，在間隔音播放完畢後就會自動連播您加入的曲目',
+      icon: 'info',
+      footer: '你還可以設定每首歌要播放的區間與是否要淡入淡出，以符合你的需求！'
+    })
+  } // if
+  else {
+    playTrack(currentIndex + 1);
+  } // else
+
 });
 
 // 隨機播放按鈕
@@ -675,7 +680,7 @@ function resetPlaylist() {
 }
 
 // 主音樂控制按鈕
-mainPlayerControl.addEventListener("click", async() => {
+mainPlayerControl.addEventListener("click", async () => {
   try {
     if (!audioPlayer.src || !audioPlayer.currentSrc || audioPlayer.src === "") {
       if (!playlist.length) {
@@ -706,13 +711,24 @@ mainPlayerControl.addEventListener("click", async() => {
       } // else
     } // else
   } catch (error) {
-    Swal.fire({
-      theme: 'auto',
-      title: '請直接點選要播放的曲目',
-      text: '點選曲目名稱後，即可自動載入並開始播放曲目',
-      icon: 'info',
-      footer: '你還可以設定每首歌要播放的區間與是否要淡入淡出，以符合你的需求！'
-    })
+    if (!playlist.length) {
+      Swal.fire({
+        theme: 'auto',
+        title: '請先加入曲目',
+        text: '請使用「加入音樂」按鈕加入要播放的音樂',
+        icon: 'info',
+        footer: '加入曲目後，還可以設定每首歌要播放的區間與是否要淡入淡出'
+      })
+    } // if
+    else {
+      Swal.fire({
+        theme: 'auto',
+        title: '請直接點選要播放的曲目',
+        text: '點選曲目名稱後，即可自動載入並開始播放曲目',
+        icon: 'info',
+        footer: '你還可以設定每首歌要播放的區間與是否要淡入淡出，以符合你的需求！'
+      })
+    } // else
   } // catch
 });
 
