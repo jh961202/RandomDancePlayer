@@ -104,6 +104,69 @@ document.getElementById('save-playlist').addEventListener('click', () => {
 
 });
 
+// 儲存音檔
+document.getElementById('make-audio').addEventListener('click', async () => {
+  if (!playlist.length) {
+    Swal.fire({
+      theme: 'auto',
+      title: '請先加入曲目',
+      text: '本功能需要在播放清單內有曲目時才能使用',
+      icon: 'info'
+    })
+    return;
+  } // if
+  
+  mergeAudioNotice.showModal();
+});
+
+document.getElementById('make-audio-start').addEventListener('click', async () => {
+  const mergeProgressDisplay = document.getElementById('mergeProgress');
+  const mergeStartBtn = document.getElementById('make-audio-start');
+  const cancelBtn = document.getElementById('cancelBtn');
+
+  if (!playlist.length) {
+    Swal.fire({
+      theme: 'auto',
+      title: '請先加入曲目',
+      text: '本功能需要在播放清單內有曲目時才能使用',
+      icon: 'info'
+    })
+    return;
+  } // if
+
+  const savePath = await ipcRenderer.invoke('save-output-audio');
+  if (!savePath.length) return;
+
+  mergeStartBtn.disabled = true;
+  cancelBtn.disabled = true;
+  mergeProgressDisplay.innerHTML = "<span class=\"loading loading-dots loading-md\"></span> 正在準備開始作業，過程中請不要關閉本程式...";
+
+  const mergeFileResult = await ipcRenderer.invoke('merge-audio', playlist, intermissionTrack, savePath);
+  if (mergeFileResult.success) {
+    mergeProgressDisplay.innerHTML = "";
+    const mergeSuccessModal = document.createElement('div');
+    mergeSuccessModal.setAttribute('role', 'alert');
+    mergeSuccessModal.setAttribute('class', 'alert alert-success');
+    const mergeSuccessText = document.createElement('span');
+    mergeSuccessText.innerHTML = "<i class=\"bi bi-check2-circle\"></i> 輸出的串燒已儲存到：" + savePath;
+    mergeSuccessModal.appendChild(mergeSuccessText);
+    mergeProgressDisplay.appendChild(mergeSuccessModal);
+  } // if
+  else {
+    mergeProgressDisplay.innerHTML = "";
+    const mergeFailModal = document.createElement('div');
+    mergeFailModal.setAttribute('role', 'alert');
+    mergeFailModal.setAttribute('class', 'alert alert-error');
+    const mergeFailText = document.createElement('span');
+    mergeFailText.innerHTML = "<i class=\"bi bi-exclamation-triangle\"></i> 發生錯誤，請參看以下訊息：" + mergeFileResult.error;
+    mergeFailModal.appendChild(mergeFailText);
+    mergeProgressDisplay.appendChild(mergeFailModal);
+  } // else
+
+  mergeStartBtn.disabled = false;
+  cancelBtn.disabled = false;
+});
+
 // 載入播放清單
 document.getElementById('load-playlist').addEventListener('click', async () => {
   Swal.fire({
@@ -766,3 +829,7 @@ audioPlayer.addEventListener('playing', () => {
 audioPlayer.addEventListener('pause', () => {
   mainPlayerControl.innerHTML = "<i class=\"bi bi-play-fill\"></i><span class=\"dock-label\" id=\"mainPlayer-label\">主音樂未播放</span>";
 })
+
+ipcRenderer.on("merge-progress", (event, { step, progress }) => {
+  document.getElementById('mergeProgress').innerHTML = "<span class=\"loading loading-spinner loading-sm\"></span> " + step + "（" + progress + "）";
+});

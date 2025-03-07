@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>隨機舞蹈播放器 v1.0.2</title>
+  <title>隨機舞蹈播放器 v1.1.0</title>
   <script defer src="renderer.js"></script>
   <link rel="stylesheet" href="node_modules/ion-rangeslider/css/ion.rangeSlider.min.css">
   <link rel="stylesheet" href="node_modules/bootstrap-icons/font/bootstrap-icons.min.css">
@@ -26,6 +26,7 @@
         <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
           <li id="load-playlist"><a><i class="bi bi-folder2-open"></i> 載入...</a></li>
           <li id="save-playlist"><a><i class="bi bi-floppy"></i> 儲存...</a></li>
+          <li id="make-audio"><a><i class="bi bi-boombox"></i> 製作為串燒...</a></li>
         </ul>
       </div>
     </div>
@@ -59,11 +60,46 @@
     </div>
   </dialog>
 
+  <dialog id="mergeAudioNotice" class="modal">
+    <div class="modal-box w-fit max-w-5xl prose" id="loadWarningContent">
+      <h3 class="text-xl font-bold">製作成串燒</h3>
+      <h4 class="text-md">這是什麼？</h4>
+      <p>
+        如果您要播放的環境不適合使用本程式（例如：不方便使用電腦）<br>
+        則您可以將整份播放清單製作成一個單獨的mp3格式音檔，方便用在各種場合（例如手機、音響等）<br>
+        其中的音檔將會按照您在本程式內的設定做處理（包含淡入淡出、播放區間等）<br>
+        並插入您指定的間隔音（如果有選擇），整個流程完全自動化
+      </p>
+      <h4 class="text-md">本功能的限制</h4>
+      <p>
+        本功能是依靠第三方套件實現自動整合音訊檔案<br>
+        由於處理手法與一般的播放軟體或更進階的音樂編輯軟體有所不同，您可能會發現以下狀況：
+        <ul>
+          <li>音樂的起始/結束點可能與您想像中有點差異，即便您已經在本程式內設定好且試聽後認為沒問題（實測大約差異落在0.5秒左右）</li>
+          <li>如果原始音檔有音量不平均等瑕疵，則會原封不動照搬到串燒好的音檔中</li>
+        </ul>
+        建議您在輸出後再次試聽音檔，並嘗試調整曲目的各自設定以符合您的需求
+      </p>
+      <h4 class="text-md">開始製作</h4>
+      <p id="mergeProgress">
+        請點選「立即開始」並選擇儲存的位置後，即可開始自動製作<br>
+        製作時的進度會顯示在此處
+      </p>
+      <div class="modal-action">
+        <button class="btn btn-soft btn-success" id="make-audio-start"><i class="bi bi-play-circle"></i> 立即開始</button>
+        <form method="dialog">
+          <!-- if there is a button in form, it will close the modal -->
+          <button class="btn btn-soft" id="cancelBtn"><i class="bi bi-x-lg"></i> 離開</button>
+        </form>
+      </div>
+    </div>
+  </dialog>
+
   <dialog id="aboutContent" class="modal">
     <div class="modal-box w-fit max-w-5xl prose">
       <h3 class="text-lg font-bold">關於本軟體</h3>
       <p>
-        隨機舞蹈播放器 v1.0.2 Build 20250304<br>
+        隨機舞蹈播放器 v1.1.0 Build 20250307<br>
         著作權利所有©2025 <a class="text-blue-400 underline hover:text-blue-500 hover:brightness-150 cursor-pointer"
           href="https://www.facebook.com/adian.fantasy.world/" target="_blank">Adian's Fantasy World</a>
       </p>
@@ -86,6 +122,12 @@
       <h4 class="text-md"><a class="text-blue-400 underline hover:text-blue-500 hover:brightness-150 cursor-pointer"
         href="https://github.com/IonDen/ion.rangeSlider" target="_blank">Ion.RangeSlider</a></h4>
       <p>基於jQuery的視覺化拖拉條，以MIT授權條款進行授權。</p>
+      <h4 class="text-md"><a class="text-blue-400 underline hover:text-blue-500 hover:brightness-150 cursor-pointer"
+        href="https://github.com/BtbN/FFmpeg-Builds" target="_blank">FFmpeg</a></h4>
+      <p>知名的開放原始碼編解碼器；原始碼以LGPL授權條款進行授權（本程式僅使用已編譯好之可執行檔）。</p>
+      <h4 class="text-md"><a class="text-blue-400 underline hover:text-blue-500 hover:brightness-150 cursor-pointer"
+        href="https://github.com/fluent-ffmpeg/node-fluent-ffmpeg" target="_blank">Fluent ffmpeg</a></h4>
+      <p>輕鬆將FFmpeg整合進Node.js環境的套件，以API方式呼叫更方便，不再需要記憶繁瑣的命令列，以MIT授權條款進行授權。</p>
       <h4 class="text-md"><a class="text-blue-400 underline hover:text-blue-500 hover:brightness-150 cursor-pointer"
         href="https://github.com/tailwindlabs/tailwindcss" target="_blank">Tailwind CSS</a></h4>
       <p>超高自由度的CSS框架，以MIT授權條款進行授權。</p>
